@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/sultan926/hello-world-nodejs.git' // Replace with your repository URL
+                git 'https://github.com/sultan926/hello-world-nodejs' // Replace with your repository URL
             }
         }
         stage('Build') {
