@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:14' // Use the official Node.js Docker image
-            args '-u root:root' // Allow running Docker commands
-        }
-    }
+    agent any
     environment {
         DOCKER_IMAGE = 'hello-world-nodejs' // Docker image name
         DOCKER_REGISTRY = '' // If you are using a Docker registry, specify it here
@@ -16,6 +11,12 @@ pipeline {
             }
         }
         stage('Build') {
+            agent {
+                docker {
+                    image 'node:14' // Use the official Node.js Docker image
+                    args '-u root:root' // Allow running Docker commands
+                }
+            }
             steps {
                 script {
                     // Build Docker image
@@ -35,7 +36,7 @@ pipeline {
             steps {
                 script {
                     // Run Docker container
-                    sh 'docker run -d -p 3000:3000 $DOCKER_IMAGE'
+                    sh 'docker run -d -p 3000:3000 --name hello-world-nodejs $DOCKER_IMAGE'
                 }
             }
         }
