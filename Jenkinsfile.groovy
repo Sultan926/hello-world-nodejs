@@ -35,7 +35,7 @@ pipeline {
             steps {
                 script {
                     // Run Docker container
-                    sh 'docker run -d -p 3000:3000 hello-world-nodejs $DOCKER_IMAGE'
+                    sh 'docker run -d -p 3000:3000 $DOCKER_IMAGE'
                 }
             }
         }
