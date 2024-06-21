@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/Sultan926/hello-world-nodejs.git', branch: 'main'
+                git url: 'https://github.com/sultan926/hello-world-nodejs.git', branch: 'main'
             }
         }
         stage('Build') {
