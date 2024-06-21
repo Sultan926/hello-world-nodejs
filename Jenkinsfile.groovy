@@ -11,32 +11,32 @@ pipeline {
             }
         }
         stage('Build') {
-            agent {
-                docker {
-                    image 'node:14' // Use the official Node.js Docker image
-                    args '-u root:root' // Allow running Docker commands
-                }
-            }
             steps {
                 script {
-                    // Build Docker image
-                    sh 'docker build -t $DOCKER_IMAGE .'
+                    docker.image('node:14').inside('-u root:root') {
+                        // Build Docker image
+                        sh 'docker build -t $DOCKER_IMAGE .'
+                    }
                 }
             }
         }
         stage('Test') {
             steps {
                 script {
-                    // You can add test commands here, e.g., npm test
-                    echo 'Running tests...'
+                    docker.image('node:14').inside('-u root:root') {
+                        // Add test commands here, e.g., npm test
+                        echo 'Running tests...'
+                    }
                 }
             }
         }
         stage('Deploy') {
             steps {
                 script {
-                    // Run Docker container
-                    sh 'docker run -d -p 3000:3000 --name hello-world-nodejs $DOCKER_IMAGE'
+                    docker.image('node:14').inside('-u root:root') {
+                        // Run Docker container
+                        sh 'docker run -d -p 3000:3000 --name hello-world-nodejs $DOCKER_IMAGE'
+                    }
                 }
             }
         }
