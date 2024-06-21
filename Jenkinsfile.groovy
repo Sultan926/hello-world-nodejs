@@ -1,40 +1,53 @@
 pipeline {
     agent any
-
+    environment {
+        DOCKER_IMAGE = 'hello-world-nodejs' // Docker image name
+        DOCKER_REGISTRY = '' // If you are using a Docker registry, specify it here
+    }
     stages {
-        stage('Checkout') {
+        stage('Clone Repository') {
             steps {
-                git url: 'https://github.com/sultan926/hello-world-nodejs.git', branch: 'main'
+                git 'https://github.com/sultan926/hello-world-nodejs' // Replace with your repository URL
             }
         }
         stage('Build') {
             steps {
-                bat 'npm install'
-                bat 'npm run build'
+                script {
+                    docker.image('node:14').inside('-u root:root') {
+                        // Build Docker image
+                        sh 'docker build -t $DOCKER_IMAGE .'
+                    }
+                }
             }
         }
         stage('Test') {
             steps {
-                bat 'npm test'
+                script {
+                    docker.image('node:14').inside('-u root:root') {
+                        // Add test commands here, e.g., npm test
+                        echo 'Running tests...'
+                    }
+                }
             }
         }
         stage('Deploy') {
             steps {
-                bat 'npm run deploy'
+                script {
+                    docker.image('node:14').inside('-u root:root') {
+                        // Run Docker container
+                        sh 'docker run -d -p 3000:3000 --name hello-world-nodejs $DOCKER_IMAGE'
+                    }
+                }
             }
         }
     }
-
     post {
         always {
-            echo 'Cleaning up...'
-            cleanWs()
-        }
-        success {
-            echo 'Build successful!'
-        }
-        failure {
-            echo 'Build failed!'
+            script {
+                // Clean up Docker container
+                sh 'docker stop hello-world-nodejs || true'
+                sh 'docker rm hello-world-nodejs || true'
+            }
         }
     }
 }
